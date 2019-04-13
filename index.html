@@ -1,0 +1,211 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+  <meta charset="UTF-8"></meta>
+  <title>Schleuder Automatik</title>
+  <script src="../_js/jquery-3.1.1.min.js"></script>
+  <script src="../_js/jquery-ui-1.12.1.min.js"></script>
+  <script type="text/javascript"></script>  
+  <link rel="stylesheet" type="text/css" href="/mystyle.css">
+  <link rel="stylesheet" href="../_style/jquery-ui.min.css">
+</head>
+
+<script src="_js/common_functions.js"></script>
+<script type="text/javascript">
+
+ function UpdateProgramm() {
+
+    var prog = document.getElementById('progselect');
+
+    var drehzahlElem1 = document.getElementById('drehzahl1');
+    var drehzahlElem2 = document.getElementById('drehzahl2');
+    var drehzahlElem3 = document.getElementById('drehzahl3');
+
+    var dauerElem1 = document.getElementById('dauer1');
+    var dauerElem2 = document.getElementById('dauer2');
+    var dauerElem3 = document.getElementById('dauer3');
+
+    var checkbox1 = document.getElementById('checkbox1');
+    var checkbox2 = document.getElementById('checkbox2');
+    var checkbox3 = document.getElementById('checkbox3');    
+
+    checkbox1.checked = HttpGet('/api/2/variables/?APPL.system.svProgramm[' + prog.value + '][1].Enabled', false).value;
+    dauerElem1.value = HttpGet('/api/2/variables/?APPL.system.svProgramm[' + prog.value + '][1].Duration', false).value;
+    drehzahlElem1.value = HttpGet('/api/2/variables/?APPL.system.svProgramm[' + prog.value + '][1].Drehzahl', false).value;
+    checkbox2.checked = HttpGet('/api/2/variables/?APPL.system.svProgramm[' + prog.value + '][2].Enabled', false).value;
+    dauerElem2.value = HttpGet('/api/2/variables/?APPL.system.svProgramm[' + prog.value + '][2].Duration', false).value;
+    drehzahlElem2.value = HttpGet('/api/2/variables/?APPL.system.svProgramm[' + prog.value + '][2].Drehzahl', false).value;
+    checkbox3.checked = HttpGet('/api/2/variables/?APPL.system.svProgramm[' + prog.value + '][3].Enabled', false).value;
+    dauerElem3.value = HttpGet('/api/2/variables/?APPL.system.svProgramm[' + prog.value + '][3].Duration', false).value;
+    drehzahlElem3.value = HttpGet('/api/2/variables/?APPL.system.svProgramm[' + prog.value + '][3].Drehzahl', false).value;
+
+
+    if (checkbox1.checked) {
+      dauerElem1.disabled=false;
+      dauerElem1.className="textBox"
+      drehzahlElem1.disabled=false;
+      drehzahlElem1.className="textBox"
+    } else {
+      dauerElem1.disabled=true;
+      dauerElem1.className="textBox tbDeactivated"
+      drehzahlElem1.disabled=true;
+      drehzahlElem1.className="textBox tbDeactivated"
+    }
+
+    if (checkbox2.checked) {
+      dauerElem2.disabled=false;
+      dauerElem2.className="textBox"
+      drehzahlElem2.disabled=false;
+      drehzahlElem2.className="textBox"
+    } else {
+      dauerElem2.disabled=true;
+      dauerElem2.className="textBox tbDeactivated"
+      drehzahlElem2.disabled=true;
+      drehzahlElem2.className="textBox tbDeactivated"
+    }
+
+    if (checkbox3.checked) {
+      dauerElem3.disabled=false;
+      dauerElem3.className="textBox"
+      drehzahlElem3.disabled=false;
+      drehzahlElem3.className="textBox"
+    } else {
+      dauerElem3.disabled=true;
+      dauerElem3.className="textBox tbDeactivated"
+      drehzahlElem3.disabled=true;
+      drehzahlElem3.className="textBox tbDeactivated"
+    }
+  } 
+
+  var timer;
+
+  function UpdateOverview() {
+    var IstDrehzahl = document.getElementById('istdrehzahl');
+    var Restdauer = document.getElementById('restdauer');
+    var Cycles = document.getElementById('cycles');
+    var Programm = document.getElementById('prog');
+
+    Programm.textContent = HttpGet('/api/2/variables/?APPL.system.svProgSelected', false).value + " ausgewählt";
+    IstDrehzahl.textContent = HttpGet('/api/2/variables/?APPL.system.svIstDrehzahl', false).value + " U/Min";
+    restdauer.textContent = HttpGet('/api/2/variables/?APPL.system.svCycleRestTime', false).value + " Sekunden";
+    Cycles.textContent = HttpGet('/api/2/variables/?APPL.system.svFinishedCycles', false).value;
+  }
+
+  function WriteValue(cyc,v) {
+    var ProgNr = document.getElementById('progselect').value;
+
+    if (v==1) {
+      var inputElem = document.getElementById('checkbox' + cyc);
+      var url = '/api/2/variables?APPL.system.svProgramm[' + ProgNr + '][' + cyc + '].Enabled';
+      var str1 = 'FALSE';
+      if (inputElem.checked) str1 = 'TRUE';
+      var data = JSON.stringify({ 'value': str1});
+      var returnData = HttpPost(url, 'application/json', data, false);
+      UpdateProgramm();
+    }
+    if (v==2) {
+      var inputElem = document.getElementById('dauer' + cyc);
+      var url = '/api/2/variables?APPL.system.svProgramm[' + ProgNr + '][' + cyc + '].Duration';
+      var data = JSON.stringify({ 'value': inputElem.value});
+      var returnData = HttpPost(url, 'application/json', data, false);
+      UpdateProgramm();
+    }
+    if (v==3) {
+      var inputElem = document.getElementById('drehzahl' + cyc);
+      var url = '/api/2/variables?APPL.system.svProgramm[' + ProgNr + '][' + cyc + '].Drehzahl';
+      var data = JSON.stringify({ 'value': inputElem.value});
+      var returnData = HttpPost(url, 'application/json', data, false);
+      UpdateProgramm();
+    }
+  }
+
+function StartProgram() {
+      var url = '/api/2/variables?APPL.system.VisuKeyGreen';
+      var data = JSON.stringify({ 'value': 1});
+      var returnData = HttpPost(url, 'application/json', data, false);
+
+      data = JSON.stringify({ 'value': 0});
+      returnData = HttpPost(url, 'application/json', data, false);
+}
+
+function OpenTab(value) {
+  var i;
+    var x = document.getElementsByClassName("city");
+    for (i = 0; i < x.length; i++) {
+       x[i].style.display = "none";  
+    }
+    document.getElementById(value).style.display = "block";  
+
+  if (value == "Overview") {
+    clearInterval(timer);
+    timer = setInterval(UpdateOverview, 1000);
+  }
+  if (value == "Einstellungen") {
+    clearInterval(timer);    
+    UpdateProgramm();
+  } 
+}
+
+function CyclicUpdateOverview() {
+   timer = setInterval(UpdateOverview, 1000);
+   UpdateOverview();
+}
+</script>
+
+<body onload="CyclicUpdateOverview()">
+<div id="tabs">
+
+
+  <div>
+    <button class="button" onclick="OpenTab('Overview')">Overview</button>
+    <button class="button" onclick="OpenTab('Einstellung')">Einstellungen</button>
+  </div>
+
+    <div id="Overview" class="w3-container city">
+        <table>
+            <tr><td width="50%"><p>Programm</p></td><td><b id="prog"></b></td></tr>
+            <tr><td><p>Restdauer</p></td><td><b id="restdauer"></b></td></tr>
+            <tr><td><p>Drehzahl</p></td><td><b id="istdrehzahl"></b></td></tr>
+            <tr><td><p>Cyclen</p></td><td><b id="cycles"></b></td></tr>
+        </table>
+        <button type="button" class="button1" onclick="StartProgram()">Start</button>
+    </div>
+
+    <div id="Einstellung" class="w3-container city" style="display:none">
+          <table>
+            <tr><td>
+              <select id="progselect"  class="select" onclick="UpdateProgramm()">
+                  <option value="1">Programm 1</option>
+                  <option value="2">Programm 2</option>
+                  <option value="3">Programm 3</option>
+                </select>
+            </td></tr>
+            <tr><td><input class="chbDhcpEnabled" id="checkbox1" type="checkbox" onchange="WriteValue(1,1)">&nbsp;Phase 1&nbsp;&nbsp;</td></tr>
+            <tr><td><p>Dauer [Sekunden]</p></td>
+              <td><input class="textBox" id="dauer1" type="number" min="0" max="120" step="10" onchange="WriteValue(1,2)"></td>
+            </tr>
+            <tr><td><p>Drehzahl [U/Min]</p></td>
+              <td><input class="textBox" id="drehzahl1" type="number" min="0" max="300" step="10" onchange="WriteValue(1,3)"></td>
+            </tr>
+        
+            <tr><td><input class='chbDhcpEnabled' id="checkbox2" type="checkbox" onchange="WriteValue(2,1)">&nbsp;Phase 2&nbsp;&nbsp;</td></tr>
+            <tr><td><p>Dauer [Sekunden]</p></td>
+              <td><input class="textBox tbEth0" id="dauer2" type="number"  type="number" min="0" max="120" step="10" onchange="WriteValue(2,2)"></td>
+            </tr>
+            <tr><td><p>Drehzahl [U/Min]</p></td>
+              <td><input class="textBox tbEth0" id="drehzahl2" type="number" min="0" max="300" step="10" onchange="WriteValue(2,3)"></td>
+            </tr>
+        
+            <tr><td><input class='chbDhcpEnabled' id="checkbox3" type="checkbox" onchange="WriteValue(3,1)">&nbsp;Phase 3&nbsp;&nbsp;</td></tr>
+            <tr><td><p>Dauer [Sekunden]</p></td>
+              <td><input class="textBox" id="dauer3" type="number"  type="number" min="0" max="120" step="10" onchange="WriteValue(3,2)"></td>
+            </tr>
+            <tr><td><p>Drehzahl [U/Min]</p></td>
+              <td><input class="textBox" id="drehzahl3" type="number" min="0" max="300" step="10" onchange="WriteValue(3,3)"></td>
+            </tr>
+          </table>
+    </div>
+  </div>
+<!-- Tab content <input id="slider1" type="range" min="100" max="500" step="10" />  -->
+</body>
