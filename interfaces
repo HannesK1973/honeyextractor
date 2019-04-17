@@ -1,0 +1,78 @@
+# This file describes the network interfaces available on your system
+# and how to activate them. For more information, see interfaces(5).
+
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+# The eth0 network interface
+#begin eth0
+auto eth0
+iface eth0 inet static
+	address 10.0.0.117
+	netmask 255.255.255.0
+	#gateway 10.0.0.138
+#end eth0
+
+# The eth1 network interface
+# iface eth1 inet manual
+#   pre-up ifconfig eth1 up
+#   up brctl addif br0 eth1
+#   pre-down brctl delif br0 eth1
+#   post-down ifconfig eth1 down
+
+# The ecat0 network interface
+# allow-hotplug ecat0
+# iface ecat0 inet manual
+#   up ifconfig ecat0 up
+#   up brctl addif br0 ecat0
+#   pre-down brctl delif br0 ecat0
+
+# The ecat1 network interface
+# allow-hotplug ecat1
+# iface ecat1 inet manual
+#   up ifconfig ecat1 up
+#   up brctl addif br0 ecat1
+#   pre-down brctl delif br0 ecat1
+
+# The ecat2 network interface
+# allow-hotplug ecat2
+# iface ecat2 inet manual
+#   up ifconfig ecat2 up
+#   up brctl addif br0 ecat2
+#   pre-down brctl delif br0 ecat2
+
+# The ecat3 network interface
+# allow-hotplug ecat3
+# iface ecat3 inet manual
+#   up ifconfig ecat3 up
+#   up brctl addif br0 ecat3
+#   pre-down brctl delif br0 ecat3
+
+# The ecat4 network interface
+# allow-hotplug ecat4
+# iface ecat4 inet manual
+#   up ifconfig ecat4 up
+#   up brctl addif br0 ecat4
+#   pre-down brctl delif br0 ecat4
+
+# The br0 network interface
+# auto br0
+# iface br0 inet static
+#   bridge_maxwait 2
+#   bridge_ports none
+#   address 192.168.100.100
+#   netmask 255.255.255.0
+
+auto wlan0
+ allow-hotplug wlan0
+ iface wlan0 inet static
+ address 10.0.0.110
+ netmask 255.255.255.0
+ gateway 10.0.0.138
+ wpa-ap-scan 1
+ wpa-scan-ssid 1
+ wpa-ssid kaufmannwlan(2G)
+ wpa-psk d95efc47cc7de14086a3c984a967b7f9b244727dbdb2aa74836458d4d07dbd59
+
+
