@@ -129,6 +129,15 @@ function StartProgram() {
       returnData = HttpPost(url, 'application/json', data, false);
 }
 
+function StopProgram() {
+      var url = '/api/2/variables?APPL.system.VisuKeyRed';
+      var data = JSON.stringify({ 'value': 1});
+      var returnData = HttpPost(url, 'application/json', data, false);
+
+      data = JSON.stringify({ 'value': 0});
+      returnData = HttpPost(url, 'application/json', data, false);
+}
+
 function OpenTab(value) {
   var i;
     var x = document.getElementsByClassName("city");
@@ -175,6 +184,7 @@ function OpenEinstellungen() {
             <tr><td><p>Cyclen</p></td><td><b id="cycles"></b></td></tr>
         </table>
         <button type="button" class="button1" onclick="StartProgram()">Start</button>
+		<button type="button" style="background-color: red" class="button1" onclick="StopProgram()">Stop</button>
     </div>
 
     <div id="Einstellung" class="w3-container city" style="display:none">
