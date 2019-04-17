@@ -1,5 +1,0 @@
-[GENERAL]
-BuiltWithSetup=6.43ALPHA1
-[LIBRARY]
-LibVersion=04.28
-ksys=04.28 E:\Program Files (x86)\KEBA\lib\0428\Gen_156\Firmware

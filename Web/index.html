@@ -151,6 +151,11 @@ function CyclicUpdateOverview() {
    timer = setInterval(UpdateOverview, 1000);
    UpdateOverview();
 }
+
+function OpenEinstellungen() {
+   OpenTab('Einstellung');
+   UpdateProgramm();
+}
 </script>
 
 <body onload="CyclicUpdateOverview()">
@@ -159,7 +164,7 @@ function CyclicUpdateOverview() {
 
   <div>
     <button class="button" onclick="OpenTab('Overview')">Overview</button>
-    <button class="button" onclick="OpenTab('Einstellung')">Einstellungen</button>
+    <button class="button" onclick="OpenEinstellungen()">Einstellungen</button>
   </div>
 
     <div id="Overview" class="w3-container city">
