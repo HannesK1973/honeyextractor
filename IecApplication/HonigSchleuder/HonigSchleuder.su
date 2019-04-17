@@ -5,6 +5,7 @@ SYSTEM Schleuder
    RESOURCE resource ON device1;  
 
    TASK Task10ms (INTERVAL := t#10ms,   PRIORITY := 10) ON resource;
+   TASK TaskPU (INTERVAL := t#0ms,   PRIORITY := 9) ON resource;
 
    
 END_SYSTEM
@@ -19,7 +20,7 @@ END_SYSTEM
 @BEG_Contents 
 
 @BEG_Export 
-@TL(10)
+@TL(11)
 SYSTEM Schleuder
 
    DEVICE device1 (CPU_TYPE := 'X86', RTS_TYPE := 'high');    
@@ -27,6 +28,7 @@ SYSTEM Schleuder
    RESOURCE resource ON device1;  
 
    TASK Task10ms (INTERVAL := t#10ms,   PRIORITY := 10) ON resource;
+   TASK TaskPU (INTERVAL := t#0ms,   PRIORITY := 9) ON resource;
 
    
 END_SYSTEM
