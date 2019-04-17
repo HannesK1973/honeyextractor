@@ -7,6 +7,7 @@ TYPE
     Drehzahl : REAL;
    END_STRUCT;
  TProgrammArray : ARRAY  [1..3,1..3] OF TProgramm;
+ TCycleArray : ARRAY  [1..3] OF DINT;
 END_TYPE
 
 
@@ -24,7 +25,7 @@ END_TYPE
 @RT(22)TypeConstTreeContainer 
 0 
 @RT(17)TypeTreeContainer 
-3 
+4 
 @DT @RT(6)TState @RT(0) @T @T @ENUM 0 3 
 @EnumConst @RT(11)StateManual @RT(0) @F @F 
 @T 
@@ -77,7 +78,16 @@ END_TYPE
 @END_Attrib 
 
 
-@DT @RT(14)TProgrammArray @RT(0) @T @T @ARRAY 0 @F @DERIVED 0 @F @RT(9)TProgramm 2 @RT(1)1 @RT(1)3 @RT(1)1 @RT(1)3 0 @F @F 
+@DT @RT(14)TProgrammArray @RT(0) @T @T @ARRAY 0 @F @DERIVED 0 @T @T @DT @RT(9)TProgramm @RT(0) @T @T @UNKNOWN 0 @F 
+@F 2 @RT(1)1 @RT(1)3 @RT(1)1 @RT(1)3 0 @F @F 
+@T 
+@BEG_Attrib 
+2 @RT(0) @RT(0) @RT(0) 
+@END_Attrib 
+
+
+@DT @RT(11)TCycleArray @RT(0) @T @T @ARRAY 0 @T @DT @RT(4)DINT @RT(0) @T @T @BASIC 0 @F 
+@F 1 @RT(1)1 @RT(1)3 0 @F @F 
 @T 
 @BEG_Attrib 
 2 @RT(0) @RT(0) @RT(0) 

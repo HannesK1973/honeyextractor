@@ -2,6 +2,7 @@ IMPORT_OVER_LISTFILE
  GET_RUNTIME
 , TState
 , TProgrammArray
+, TCycleArray
 
 END_IMPORT
 
@@ -29,6 +30,7 @@ SYSTEM_VAR
  svIstDrehzahl : REAL;
  FUAO1 : REAL;
  svProgSelected : INT;
+ svFinishedCyclesP : TCycleArray;
 END_VAR
 
 SYSTEM_OBJECT
@@ -99,6 +101,10 @@ IF (svState=StateAutomaticRunning) THEN
  ELSE (* Zyklusende erreicht*)
         svState:=StateAutomaticStopped;
         svFinishedCycles := svFinishedCycles + 1;
+        svFinishedCyclesP[programmNr] := svFinishedCyclesP[programmNr] + 1;
+     
+     
+     
  END_IF;
 
 END_IF;
@@ -286,7 +292,7 @@ END_ALGORITHM_BLOCK
 
 @BEG_Dcl 
 @RT(16)DclTreeContainer 
-23 
+24 
 @Var @RT(8)Task10ms @RT(0) @T @T @RENAMED 0 @T @T @DT @RT(4)TASK @RT(0) @T @T @BASIC 0 @F 
 @F @F 
 @T 
@@ -471,6 +477,14 @@ END_ALGORITHM_BLOCK
 @END_Attrib 
 1 8 @F @F @F @F 
 
+@Var @RT(17)svFinishedCyclesP @RT(0) @T @T @DERIVED 0 @T @T @DT @RT(11)TCycleArray @RT(0) @T @T @UNKNOWN 0 @F 
+@F @F 
+@T 
+@BEG_Attrib 
+3 @RT(0) @RT(0) @RT(0) 
+@END_Attrib 
+1 8 @F @F @F @F 
+
 @END_Dcl 
 
 @END_Export 
@@ -646,7 +660,7 @@ END_ALGORITHM_BLOCK
 @END_Export 
 
 @BEG_Body 
-@TL(52)
+@TL(56)
 
 actualTime := GET_RUNTIME();
 svSollDrehzahl := 0.0;
@@ -695,6 +709,10 @@ IF (svState=StateAutomaticRunning) THEN
  ELSE (* Zyklusende erreicht*)
         svState:=StateAutomaticStopped;
         svFinishedCycles := svFinishedCycles + 1;
+        svFinishedCyclesP[programmNr] := svFinishedCyclesP[programmNr] + 1;
+     
+     
+     
  END_IF;
 
 END_IF;

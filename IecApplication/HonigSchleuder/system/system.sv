@@ -1,6 +1,7 @@
 %IMPORT_OVER_LISTFILE_OBJECT
  TState
 , TProgrammArray
+, TCycleArray
 , StateAutomaticStopped
 
 END_IMPORT
@@ -26,6 +27,8 @@ END_IMPORT
     ;
  svProgSelected : INT
     ;
+ svFinishedCyclesP : TCycleArray := 0
+   RETAIN ;
 %END
 
 
@@ -41,7 +44,7 @@ END_IMPORT
 
 @BEG_Export 
 @RT(16)SveTreeContainer 
-10 
+11 
 @SysVar @RT(7)svState @RT(0) @T @T @DERIVED 0 @T @T @DT @RT(6)TState @RT(0) @T @T @UNKNOWN 0 @F 
 @F @F 
 @T 
@@ -138,8 +141,7 @@ END_IMPORT
 @END_Attrib 
 
 
-@SysVar @RT(10)svProgramm @RT(0) @T @T @DERIVED 0 @T @T @DT @RT(14)TProgrammArray @RT(0) @T @T @UNKNOWN 0 @F 
-@F @F 
+@SysVar @RT(10)svProgramm @RT(0) @T @T @DERIVED 0 @F @RT(14)TProgrammArray @F 
 @T 
 @BEG_Attrib 
 4 @RT(0) @RT(0) 
@@ -197,6 +199,28 @@ END_IMPORT
 @RT(0) @RT(0) @RT(0) @RT(0) @RT(0) 
 @END_Attrib 
 0 
+
+
+@SysVar @RT(17)svFinishedCyclesP @RT(0) @T @T @DERIVED 0 @T @T @DT @RT(11)TCycleArray @RT(0) @T @T @UNKNOWN 0 @F 
+@F @F 
+@T 
+@BEG_Attrib 
+4 @RT(1)0 @RT(0) 
+@RT(0) @RT(0) @RT(0) @RT(0) @RT(0) @RT(0) @RT(0) 
+@RT(0) @RT(0) @RT(0) @RT(1)y @RT(0) @RT(0) 
+@RT(0) @RT(0) 
+@RT(0) @RT(0) @RT(0) @RT(0) @RT(0) 
+@END_Attrib 
+1 
+@AttrSym @RT(17)svFinishedCyclesP @RT(0) @F @F 
+@T 
+@BEG_Attrib 
+4 @RT(1)0 @RT(0) 
+@RT(0) @RT(0) @RT(0) @RT(0) @RT(0) @RT(0) @RT(0) 
+@RT(0) @RT(0) @RT(0) @RT(1)y @RT(0) @RT(0) 
+@RT(0) @RT(0) 
+@RT(0) @RT(0) @RT(0) @RT(0) @RT(0) 
+@END_Attrib 
 
 
 @RT(15)SETreeContainer 
