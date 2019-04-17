@@ -31,10 +31,12 @@ SYSTEM_VAR
  FUAO1 : REAL;
  svProgSelected : INT;
  svFinishedCyclesP : TCycleArray;
+ svResetCycleCount : BOOL;
 END_VAR
 
 SYSTEM_OBJECT
  Task10ms : TASK;
+ TaskPU : TASK;
 END_OBJECT
 
 VAR
@@ -75,11 +77,11 @@ IF (startCycle) THEN
    gesamtDauer := (2*programm[programmNr,1].Duration)+ (2*programm[programmNr,2].Duration) + (2*programm[programmNr,3].Duration);   
 END_IF;                         
 
-IF (svState=StateAutomaticRunning) THEN
+svCycleRestTime := gesamtDauer;
 
+IF (svState=StateAutomaticRunning) THEN
     durationS :=  (TIME_TO_LINT(actualTime - cycleStartTime))/1000000;
     svCycleRestTime := gesamtDauer - durationS;
- 
  IF (durationS >= 0 AND 
      durationS < programm[programmNr,1].Duration) THEN
         svSollDrehzahl := programm[programmNr,1].Drehzahl;
@@ -102,9 +104,6 @@ IF (svState=StateAutomaticRunning) THEN
         svState:=StateAutomaticStopped;
         svFinishedCycles := svFinishedCycles + 1;
         svFinishedCyclesP[programmNr] := svFinishedCyclesP[programmNr] + 1;
-     
-     
-     
  END_IF;
 
 END_IF;
@@ -251,6 +250,19 @@ END_IF;
 
 ;#END_EDIT_BLOCK END_ALGORITHM
 
+POSTUPDATE_ALGORITHM ResetCyleCounter ON TaskPU WITH svResetCycleCount
+
+#BEGIN_EDIT_BLOCK
+svFinishedCycles := 0;
+svFinishedCyclesP[1]:=0;
+svFinishedCyclesP[2]:=0;
+svFinishedCyclesP[3]:=0;
+
+
+
+
+;#END_EDIT_BLOCK END_ALGORITHM
+
 
 
 END_ALGORITHM_BLOCK
@@ -292,7 +304,7 @@ END_ALGORITHM_BLOCK
 
 @BEG_Dcl 
 @RT(16)DclTreeContainer 
-24 
+26 
 @Var @RT(8)Task10ms @RT(0) @T @T @RENAMED 0 @T @T @DT @RT(4)TASK @RT(0) @T @T @BASIC 0 @F 
 @F @F 
 @T 
@@ -485,13 +497,29 @@ END_ALGORITHM_BLOCK
 @END_Attrib 
 1 8 @F @F @F @F 
 
+@Var @RT(17)svResetCycleCount @RT(0) @T @T @RENAMED 0 @T @T @DT @RT(4)BOOL @RT(0) @T @T @BASIC 0 @F 
+@F @F 
+@T 
+@BEG_Attrib 
+3 @RT(0) @RT(0) @RT(0) 
+@END_Attrib 
+1 8 @F @F @F @F 
+
+@Var @RT(6)TaskPU @RT(0) @T @F @DT @RT(4)TASK @RT(0) @T @T @BASIC 0 @F 
+@F @F 
+@T 
+@BEG_Attrib 
+3 @RT(0) @RT(0) @RT(0) 
+@END_Attrib 
+1 7 @F @F @F @F 
+
 @END_Dcl 
 
 @END_Export 
 
 @BEG_Body 
 
-5 
+6 
 
 @BEG_Export 
 
@@ -659,8 +687,22 @@ END_ALGORITHM_BLOCK
 
 @END_Export 
 
+@BEG_Export 
+
+@BEG_Algo 
+@POSTUPDATE_ALGORITHM @RT(16)ResetCyleCounter @STRUCTURED_TEXT 
+@RT(0) @RT(17)svResetCycleCount @RT(6)TaskPU @F @F 
+@END_Algo 
+
+@BEG_Dcl 
+@RT(16)DclTreeContainer 
+0 
+@END_Dcl 
+
+@END_Export 
+
 @BEG_Body 
-@TL(56)
+@TL(53)
 
 actualTime := GET_RUNTIME();
 svSollDrehzahl := 0.0;
@@ -683,11 +725,11 @@ IF (startCycle) THEN
    gesamtDauer := (2*programm[programmNr,1].Duration)+ (2*programm[programmNr,2].Duration) + (2*programm[programmNr,3].Duration);   
 END_IF;                         
 
-IF (svState=StateAutomaticRunning) THEN
+svCycleRestTime := gesamtDauer;
 
+IF (svState=StateAutomaticRunning) THEN
     durationS :=  (TIME_TO_LINT(actualTime - cycleStartTime))/1000000;
     svCycleRestTime := gesamtDauer - durationS;
- 
  IF (durationS >= 0 AND 
      durationS < programm[programmNr,1].Duration) THEN
         svSollDrehzahl := programm[programmNr,1].Drehzahl;
@@ -710,9 +752,6 @@ IF (svState=StateAutomaticRunning) THEN
         svState:=StateAutomaticStopped;
         svFinishedCycles := svFinishedCycles + 1;
         svFinishedCyclesP[programmNr] := svFinishedCyclesP[programmNr] + 1;
-     
-     
-     
  END_IF;
 
 END_IF;
@@ -851,6 +890,22 @@ IF (ModeSwitchP1) THEN svProgSelected := 1;
 ELSIF (ModeSwitchP3) THEN svProgSelected := 3;
 ELSE  svProgSelected := 2;
 END_IF;
+
+
+@END_Body 
+
+@@@BEG_Comment@@@ 
+@TL(0)
+
+@@@END_Comment@@@ 
+
+@BEG_Body 
+@TL(7)
+svFinishedCycles := 0;
+svFinishedCyclesP[1]:=0;
+svFinishedCyclesP[2]:=0;
+svFinishedCyclesP[3]:=0;
+
 
 
 @END_Body 

@@ -29,6 +29,8 @@ END_IMPORT
     ;
  svFinishedCyclesP : TCycleArray := 0
    RETAIN ;
+ svResetCycleCount : BOOL := FALSE
+    ;
 %END
 
 
@@ -44,7 +46,7 @@ END_IMPORT
 
 @BEG_Export 
 @RT(16)SveTreeContainer 
-11 
+12 
 @SysVar @RT(7)svState @RT(0) @T @T @DERIVED 0 @T @T @DT @RT(6)TState @RT(0) @T @T @UNKNOWN 0 @F 
 @F @F 
 @T 
@@ -221,6 +223,19 @@ END_IMPORT
 @RT(0) @RT(0) 
 @RT(0) @RT(0) @RT(0) @RT(0) @RT(0) 
 @END_Attrib 
+
+
+@SysVar @RT(17)svResetCycleCount @RT(0) @T @F @DT @RT(4)BOOL @RT(0) @T @T @BASIC 0 @F 
+@F @F 
+@T 
+@BEG_Attrib 
+4 @RT(5)FALSE @RT(0) 
+@RT(0) @RT(0) @RT(0) @RT(0) @RT(0) @RT(0) @RT(0) 
+@RT(0) @RT(0) @RT(0) @RT(0) @RT(0) @RT(0) 
+@RT(0) @RT(0) 
+@RT(0) @RT(0) @RT(0) @RT(0) @RT(0) 
+@END_Attrib 
+0 
 
 
 @RT(15)SETreeContainer 
