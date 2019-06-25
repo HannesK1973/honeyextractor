@@ -94,7 +94,6 @@ svCycleRestTime := gesamtDauer;
 IF (svState=StateAutomaticRunning) THEN
     durationS :=  (TIME_TO_LINT(actualTime - cycleStartTime))/1000000;
     svCycleRestTime := gesamtDauer - durationS;
-    
  IF (durationS >= 0 AND 
      durationS < programm[programmNr,1].Duration) THEN
         svSollDrehzahl := programm[programmNr,1].Drehzahl;
@@ -184,8 +183,8 @@ END_VAR
 #BEGIN_EDIT_BLOCK
 (* Vorsicht LedRed ist eingeschaltet wenn False *)
 
-(*Rote Led soll blinken wenn Automatik läuft*)
-(*Grüne Led soll blinken wenn Automatik läuft*)
+(*Rote Led soll blinken wenn Automatik lÃ¤uft*)
+(*GrÃ¼ne Led soll blinken wenn Automatik lÃ¤uft*)
 IF (svState=StateAutomaticRunning) THEN
     actualTime := GET_RUNTIME();
     rest := MOD(TIME_TO_LINT(actualTime),blinktime); 
@@ -199,7 +198,7 @@ IF (svState=StateAutomaticRunning) THEN
 END_IF;  
 
 
-(*Grüne Led soll leuchten wenn Automatik gestartet werden kann*)
+(*GrÃ¼ne Led soll leuchten wenn Automatik gestartet werden kann*)
 IF (svState=StateAutomaticStopped AND SafetySwitch1=TRUE AND KeyRed) THEN
     LedRed:=TRUE;
     LedGreen:=TRUE;
@@ -241,17 +240,17 @@ VAR
 END_VAR
 #BEGIN_EDIT_BLOCK
 
-(*Start Knopf Input erkennen und Starten neuer Zyklus StartKnopf ist Öffner*)
+(*Start Knopf Input erkennen und Starten neuer Zyklus StartKnopf ist Ã–ffner*)
 IF (svState=StateAutomaticStopped AND KeyGreen=FALSE AND KeyGreenLast=TRUE) THEN (*Automatik Zyklus starten*)
     startCycle:=TRUE; 
 END_IF; 
-KeyGreenLast:=KeyGreen; (*für Flankenerkennung*)   
+KeyGreenLast:=KeyGreen; (*fÃ¼r Flankenerkennung*)   
 
 (*Start Knopf Visu erkennen und Starten neuer Zyklus*)
 IF (svState=StateAutomaticStopped AND VisuKeyGreen=TRUE AND VisuKeyGreenLast=FALSE) THEN (*Automatik Zyklus starten*)
     startCycle:=TRUE; 
 END_IF; 
-VisuKeyGreenLast:=VisuKeyGreen; (*für Flankenerkennung*)   
+VisuKeyGreenLast:=VisuKeyGreen; (*fÃ¼r Flankenerkennung*)   
 
 
 (*Stop Taster Input erkennen und Stop*)
@@ -750,6 +749,7 @@ END_ALGORITHM_BLOCK
 @BEG_Body 
 @TL(73)
 
+
 actualTime := GET_RUNTIME();
 svSollDrehzahl := 0.0;    
 
@@ -785,7 +785,6 @@ svCycleRestTime := gesamtDauer;
 IF (svState=StateAutomaticRunning) THEN
     durationS :=  (TIME_TO_LINT(actualTime - cycleStartTime))/1000000;
     svCycleRestTime := gesamtDauer - durationS;
-    
  IF (durationS >= 0 AND 
      durationS < programm[programmNr,1].Duration) THEN
         svSollDrehzahl := programm[programmNr,1].Drehzahl;
@@ -871,8 +870,8 @@ svIstDrehzahl := DINT_TO_REAL((REAL_TO_DINT(svIstDrehzahl)/10)*10);
 @TL(34)
 (* Vorsicht LedRed ist eingeschaltet wenn False *)
 
-(*Rote Led soll blinken wenn Automatik läuft*)
-(*Grüne Led soll blinken wenn Automatik läuft*)
+(*Rote Led soll blinken wenn Automatik lÃ¤uft*)
+(*GrÃ¼ne Led soll blinken wenn Automatik lÃ¤uft*)
 IF (svState=StateAutomaticRunning) THEN
     actualTime := GET_RUNTIME();
     rest := MOD(TIME_TO_LINT(actualTime),blinktime); 
@@ -886,7 +885,7 @@ IF (svState=StateAutomaticRunning) THEN
 END_IF;  
 
 
-(*Grüne Led soll leuchten wenn Automatik gestartet werden kann*)
+(*GrÃ¼ne Led soll leuchten wenn Automatik gestartet werden kann*)
 IF (svState=StateAutomaticStopped AND SafetySwitch1=TRUE AND KeyRed) THEN
     LedRed:=TRUE;
     LedGreen:=TRUE;
@@ -929,17 +928,17 @@ END_IF;
 @BEG_Body 
 @TL(30)
 
-(*Start Knopf Input erkennen und Starten neuer Zyklus StartKnopf ist Öffner*)
+(*Start Knopf Input erkennen und Starten neuer Zyklus StartKnopf ist Ã–ffner*)
 IF (svState=StateAutomaticStopped AND KeyGreen=FALSE AND KeyGreenLast=TRUE) THEN (*Automatik Zyklus starten*)
     startCycle:=TRUE; 
 END_IF; 
-KeyGreenLast:=KeyGreen; (*für Flankenerkennung*)   
+KeyGreenLast:=KeyGreen; (*fÃ¼r Flankenerkennung*)   
 
 (*Start Knopf Visu erkennen und Starten neuer Zyklus*)
 IF (svState=StateAutomaticStopped AND VisuKeyGreen=TRUE AND VisuKeyGreenLast=FALSE) THEN (*Automatik Zyklus starten*)
     startCycle:=TRUE; 
 END_IF; 
-VisuKeyGreenLast:=VisuKeyGreen; (*für Flankenerkennung*)   
+VisuKeyGreenLast:=VisuKeyGreen; (*fÃ¼r Flankenerkennung*)   
 
 
 (*Stop Taster Input erkennen und Stop*)
