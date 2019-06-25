@@ -32,6 +32,8 @@ SYSTEM_VAR
  svProgSelected : INT;
  svFinishedCyclesP : TCycleArray;
  svResetCycleCount : BOOL;
+ sv_easyout : BOOL;
+ sv_easyoutTime : LINT;
 END_VAR
 
 SYSTEM_OBJECT
@@ -41,6 +43,7 @@ END_OBJECT
 
 VAR
  startCycle : BOOL;
+ easyoutDrehzahl : REAL;
 END_VAR
 
 PROCESS_ALGORITHM Automatik ON Task10ms AUTOSTART
@@ -57,7 +60,7 @@ END_VAR
 #BEGIN_EDIT_BLOCK
 
 actualTime := GET_RUNTIME();
-svSollDrehzahl := 0.0;
+svSollDrehzahl := 0.0;    
 
 IF (startCycle) THEN
    cycleStartTime := actualTime;
@@ -66,15 +69,24 @@ IF (startCycle) THEN
    programmNr := svProgSelected;   
    programm := svProgramm;
    IF (programm[programmNr,1].Enabled = FALSE) THEN
-      programm[programmNr,1].Duration := 0;    
+      programm[programmNr,1].Duration := 0;   
    END_IF; 
    IF (programm[programmNr,2].Enabled = FALSE) THEN
-      programm[programmNr,2].Duration := 0;    
+      programm[programmNr,2].Duration := 0;   
    END_IF; 
    IF (programm[programmNr,3].Enabled = FALSE) THEN
-      programm[programmNr,3].Duration := 0;    
+      programm[programmNr,3].Duration := 0;
    END_IF; 
-   gesamtDauer := (2*programm[programmNr,1].Duration)+ (2*programm[programmNr,2].Duration) + (2*programm[programmNr,3].Duration);   
+   gesamtDauer := (2*programm[programmNr,1].Duration)+ (2*programm[programmNr,2].Duration) + (2*programm[programmNr,3].Duration);  
+    
+   easyoutDrehzahl := programm[programmNr,3].Drehzahl;
+      IF (programm[programmNr,3].Enabled = FALSE) THEN
+      easyoutDrehzahl := programm[programmNr,2].Drehzahl * -1.0; 
+   END_IF;  
+   IF (programm[programmNr,2].Enabled = FALSE) THEN
+      easyoutDrehzahl := programm[programmNr,1].Drehzahl;   
+   END_IF; 
+    
 END_IF;                         
 
 svCycleRestTime := gesamtDauer;
@@ -85,21 +97,31 @@ IF (svState=StateAutomaticRunning) THEN
  IF (durationS >= 0 AND 
      durationS < programm[programmNr,1].Duration) THEN
         svSollDrehzahl := programm[programmNr,1].Drehzahl;
+     
  ELSIF (durationS >= programm[programmNr,1].Duration AND 
      durationS < (2*programm[programmNr,1].Duration)) THEN
         svSollDrehzahl := programm[programmNr,1].Drehzahl*-1.0;
+     
  ELSIF (durationS >= (2*programm[programmNr,1].Duration) AND 
      durationS < (2*programm[programmNr,1].Duration+programm[programmNr,2].Duration)) THEN
         svSollDrehzahl := programm[programmNr,2].Drehzahl*-1.0;
+     
  ELSIF (durationS >= (2*programm[programmNr,1].Duration+programm[programmNr,2].Duration) AND 
      durationS < (2*programm[programmNr,1].Duration+2*programm[programmNr,2].Duration)) THEN
         svSollDrehzahl := programm[programmNr,2].Drehzahl;
+     
  ELSIF (durationS >= (2*programm[programmNr,1].Duration+2*programm[programmNr,2].Duration) AND 
      durationS < (2*programm[programmNr,1].Duration+2*programm[programmNr,2].Duration+programm[programmNr,3].Duration)) THEN
         svSollDrehzahl := programm[programmNr,3].Drehzahl;
+     
  ELSIF (durationS >= (2*programm[programmNr,1].Duration+2*programm[programmNr,2].Duration+programm[programmNr,3].Duration) AND 
      durationS < (2*programm[programmNr,1].Duration+2*programm[programmNr,2].Duration+2*programm[programmNr,3].Duration)) THEN
         svSollDrehzahl := programm[programmNr,3].Drehzahl*-1.0;
+     
+ ELSIF ((sv_easyout) AND 
+     (durationS < (2*programm[programmNr,1].Duration+2*programm[programmNr,2].Duration+2*programm[programmNr,3].Duration) + sv_easyoutTime)) THEN
+          svSollDrehzahl :=  easyoutDrehzahl;
+         
  ELSE (* Zyklusende erreicht*)
         svState:=StateAutomaticStopped;
         svFinishedCycles := svFinishedCycles + 1;
@@ -161,8 +183,8 @@ END_VAR
 #BEGIN_EDIT_BLOCK
 (* Vorsicht LedRed ist eingeschaltet wenn False *)
 
-(*Rote Led soll blinken wenn Automatik läuft*)
-(*Grüne Led soll blinken wenn Automatik läuft*)
+(*Rote Led soll blinken wenn Automatik lÃ¤uft*)
+(*GrÃ¼ne Led soll blinken wenn Automatik lÃ¤uft*)
 IF (svState=StateAutomaticRunning) THEN
     actualTime := GET_RUNTIME();
     rest := MOD(TIME_TO_LINT(actualTime),blinktime); 
@@ -176,7 +198,7 @@ IF (svState=StateAutomaticRunning) THEN
 END_IF;  
 
 
-(*Grüne Led soll leuchten wenn Automatik gestartet werden kann*)
+(*GrÃ¼ne Led soll leuchten wenn Automatik gestartet werden kann*)
 IF (svState=StateAutomaticStopped AND SafetySwitch1=TRUE AND KeyRed) THEN
     LedRed:=TRUE;
     LedGreen:=TRUE;
@@ -218,17 +240,17 @@ VAR
 END_VAR
 #BEGIN_EDIT_BLOCK
 
-(*Start Knopf Input erkennen und Starten neuer Zyklus StartKnopf ist Öffner*)
+(*Start Knopf Input erkennen und Starten neuer Zyklus StartKnopf ist Ã–ffner*)
 IF (svState=StateAutomaticStopped AND KeyGreen=FALSE AND KeyGreenLast=TRUE) THEN (*Automatik Zyklus starten*)
     startCycle:=TRUE; 
 END_IF; 
-KeyGreenLast:=KeyGreen; (*für Flankenerkennung*)   
+KeyGreenLast:=KeyGreen; (*fÃ¼r Flankenerkennung*)   
 
 (*Start Knopf Visu erkennen und Starten neuer Zyklus*)
 IF (svState=StateAutomaticStopped AND VisuKeyGreen=TRUE AND VisuKeyGreenLast=FALSE) THEN (*Automatik Zyklus starten*)
     startCycle:=TRUE; 
 END_IF; 
-VisuKeyGreenLast:=VisuKeyGreen; (*für Flankenerkennung*)   
+VisuKeyGreenLast:=VisuKeyGreen; (*fÃ¼r Flankenerkennung*)   
 
 
 (*Stop Taster Input erkennen und Stop*)
@@ -304,7 +326,7 @@ END_ALGORITHM_BLOCK
 
 @BEG_Dcl 
 @RT(16)DclTreeContainer 
-26 
+29 
 @Var @RT(8)Task10ms @RT(0) @T @T @RENAMED 0 @T @T @DT @RT(4)TASK @RT(0) @T @T @BASIC 0 @F 
 @F @F 
 @T 
@@ -441,8 +463,7 @@ END_ALGORITHM_BLOCK
 @END_Attrib 
 1 8 @F @F @F @F 
 
-@Var @RT(10)svProgramm @RT(0) @T @T @DERIVED 0 @T @T @DT @RT(14)TProgrammArray @RT(0) @T @T @UNKNOWN 0 @F 
-@F @F 
+@Var @RT(10)svProgramm @RT(0) @T @T @DERIVED 0 @F @RT(14)TProgrammArray @F 
 @T 
 @BEG_Attrib 
 3 @RT(0) @RT(0) @RT(0) 
@@ -512,6 +533,30 @@ END_ALGORITHM_BLOCK
 3 @RT(0) @RT(0) @RT(0) 
 @END_Attrib 
 1 7 @F @F @F @F 
+
+@Var @RT(10)sv_easyout @RT(0) @T @F @DT @RT(4)BOOL @RT(0) @T @T @BASIC 0 @F 
+@F @F 
+@T 
+@BEG_Attrib 
+3 @RT(0) @RT(0) @RT(0) 
+@END_Attrib 
+1 8 @F @F @F @F 
+
+@Var @RT(14)sv_easyoutTime @RT(0) @T @F @DT @RT(4)LINT @RT(0) @T @T @BASIC 0 @F 
+@F @F 
+@T 
+@BEG_Attrib 
+3 @RT(0) @RT(0) @RT(0) 
+@END_Attrib 
+1 8 @F @F @F @F 
+
+@Var @RT(15)easyoutDrehzahl @RT(0) @T @F @DT @RT(4)REAL @RT(0) @T @T @BASIC 0 @F 
+@F @F 
+@T 
+@BEG_Attrib 
+3 @RT(0) @RT(0) @RT(0) 
+@END_Attrib 
+1 0 @F @F @F @F 
 
 @END_Dcl 
 
@@ -702,10 +747,11 @@ END_ALGORITHM_BLOCK
 @END_Export 
 
 @BEG_Body 
-@TL(53)
+@TL(73)
+
 
 actualTime := GET_RUNTIME();
-svSollDrehzahl := 0.0;
+svSollDrehzahl := 0.0;    
 
 IF (startCycle) THEN
    cycleStartTime := actualTime;
@@ -714,15 +760,24 @@ IF (startCycle) THEN
    programmNr := svProgSelected;   
    programm := svProgramm;
    IF (programm[programmNr,1].Enabled = FALSE) THEN
-      programm[programmNr,1].Duration := 0;    
+      programm[programmNr,1].Duration := 0;   
    END_IF; 
    IF (programm[programmNr,2].Enabled = FALSE) THEN
-      programm[programmNr,2].Duration := 0;    
+      programm[programmNr,2].Duration := 0;   
    END_IF; 
    IF (programm[programmNr,3].Enabled = FALSE) THEN
-      programm[programmNr,3].Duration := 0;    
+      programm[programmNr,3].Duration := 0;
    END_IF; 
-   gesamtDauer := (2*programm[programmNr,1].Duration)+ (2*programm[programmNr,2].Duration) + (2*programm[programmNr,3].Duration);   
+   gesamtDauer := (2*programm[programmNr,1].Duration)+ (2*programm[programmNr,2].Duration) + (2*programm[programmNr,3].Duration);  
+    
+   easyoutDrehzahl := programm[programmNr,3].Drehzahl;
+      IF (programm[programmNr,3].Enabled = FALSE) THEN
+      easyoutDrehzahl := programm[programmNr,2].Drehzahl * -1.0; 
+   END_IF;  
+   IF (programm[programmNr,2].Enabled = FALSE) THEN
+      easyoutDrehzahl := programm[programmNr,1].Drehzahl;   
+   END_IF; 
+    
 END_IF;                         
 
 svCycleRestTime := gesamtDauer;
@@ -733,21 +788,31 @@ IF (svState=StateAutomaticRunning) THEN
  IF (durationS >= 0 AND 
      durationS < programm[programmNr,1].Duration) THEN
         svSollDrehzahl := programm[programmNr,1].Drehzahl;
+     
  ELSIF (durationS >= programm[programmNr,1].Duration AND 
      durationS < (2*programm[programmNr,1].Duration)) THEN
         svSollDrehzahl := programm[programmNr,1].Drehzahl*-1.0;
+     
  ELSIF (durationS >= (2*programm[programmNr,1].Duration) AND 
      durationS < (2*programm[programmNr,1].Duration+programm[programmNr,2].Duration)) THEN
         svSollDrehzahl := programm[programmNr,2].Drehzahl*-1.0;
+     
  ELSIF (durationS >= (2*programm[programmNr,1].Duration+programm[programmNr,2].Duration) AND 
      durationS < (2*programm[programmNr,1].Duration+2*programm[programmNr,2].Duration)) THEN
         svSollDrehzahl := programm[programmNr,2].Drehzahl;
+     
  ELSIF (durationS >= (2*programm[programmNr,1].Duration+2*programm[programmNr,2].Duration) AND 
      durationS < (2*programm[programmNr,1].Duration+2*programm[programmNr,2].Duration+programm[programmNr,3].Duration)) THEN
         svSollDrehzahl := programm[programmNr,3].Drehzahl;
+     
  ELSIF (durationS >= (2*programm[programmNr,1].Duration+2*programm[programmNr,2].Duration+programm[programmNr,3].Duration) AND 
      durationS < (2*programm[programmNr,1].Duration+2*programm[programmNr,2].Duration+2*programm[programmNr,3].Duration)) THEN
         svSollDrehzahl := programm[programmNr,3].Drehzahl*-1.0;
+     
+ ELSIF ((sv_easyout) AND 
+     (durationS < (2*programm[programmNr,1].Duration+2*programm[programmNr,2].Duration+2*programm[programmNr,3].Duration) + sv_easyoutTime)) THEN
+          svSollDrehzahl :=  easyoutDrehzahl;
+         
  ELSE (* Zyklusende erreicht*)
         svState:=StateAutomaticStopped;
         svFinishedCycles := svFinishedCycles + 1;
@@ -805,8 +870,8 @@ svIstDrehzahl := DINT_TO_REAL((REAL_TO_DINT(svIstDrehzahl)/10)*10);
 @TL(34)
 (* Vorsicht LedRed ist eingeschaltet wenn False *)
 
-(*Rote Led soll blinken wenn Automatik läuft*)
-(*Grüne Led soll blinken wenn Automatik läuft*)
+(*Rote Led soll blinken wenn Automatik lÃ¤uft*)
+(*GrÃ¼ne Led soll blinken wenn Automatik lÃ¤uft*)
 IF (svState=StateAutomaticRunning) THEN
     actualTime := GET_RUNTIME();
     rest := MOD(TIME_TO_LINT(actualTime),blinktime); 
@@ -820,7 +885,7 @@ IF (svState=StateAutomaticRunning) THEN
 END_IF;  
 
 
-(*Grüne Led soll leuchten wenn Automatik gestartet werden kann*)
+(*GrÃ¼ne Led soll leuchten wenn Automatik gestartet werden kann*)
 IF (svState=StateAutomaticStopped AND SafetySwitch1=TRUE AND KeyRed) THEN
     LedRed:=TRUE;
     LedGreen:=TRUE;
@@ -863,17 +928,17 @@ END_IF;
 @BEG_Body 
 @TL(30)
 
-(*Start Knopf Input erkennen und Starten neuer Zyklus StartKnopf ist Öffner*)
+(*Start Knopf Input erkennen und Starten neuer Zyklus StartKnopf ist Ã–ffner*)
 IF (svState=StateAutomaticStopped AND KeyGreen=FALSE AND KeyGreenLast=TRUE) THEN (*Automatik Zyklus starten*)
     startCycle:=TRUE; 
 END_IF; 
-KeyGreenLast:=KeyGreen; (*für Flankenerkennung*)   
+KeyGreenLast:=KeyGreen; (*fÃ¼r Flankenerkennung*)   
 
 (*Start Knopf Visu erkennen und Starten neuer Zyklus*)
 IF (svState=StateAutomaticStopped AND VisuKeyGreen=TRUE AND VisuKeyGreenLast=FALSE) THEN (*Automatik Zyklus starten*)
     startCycle:=TRUE; 
 END_IF; 
-VisuKeyGreenLast:=VisuKeyGreen; (*für Flankenerkennung*)   
+VisuKeyGreenLast:=VisuKeyGreen; (*fÃ¼r Flankenerkennung*)   
 
 
 (*Stop Taster Input erkennen und Stop*)
