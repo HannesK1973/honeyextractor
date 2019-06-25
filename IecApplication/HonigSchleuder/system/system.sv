@@ -31,6 +31,10 @@ END_IMPORT
    RETAIN ;
  svResetCycleCount : BOOL := FALSE
     ;
+ sv_easyout : BOOL := TRUE
+   RETAIN ;
+ sv_easyoutTime : LINT := 15
+   RETAIN ;
 %END
 
 
@@ -46,7 +50,7 @@ END_IMPORT
 
 @BEG_Export 
 @RT(16)SveTreeContainer 
-12 
+14 
 @SysVar @RT(7)svState @RT(0) @T @T @DERIVED 0 @T @T @DT @RT(6)TState @RT(0) @T @T @UNKNOWN 0 @F 
 @F @F 
 @T 
@@ -143,7 +147,8 @@ END_IMPORT
 @END_Attrib 
 
 
-@SysVar @RT(10)svProgramm @RT(0) @T @T @DERIVED 0 @F @RT(14)TProgrammArray @F 
+@SysVar @RT(10)svProgramm @RT(0) @T @T @DERIVED 0 @T @T @DT @RT(14)TProgrammArray @RT(0) @T @T @UNKNOWN 0 @F 
+@F @F 
 @T 
 @BEG_Attrib 
 4 @RT(0) @RT(0) 
@@ -237,6 +242,49 @@ END_IMPORT
 @END_Attrib 
 0 
 
+
+@SysVar @RT(10)sv_easyout @RT(0) @T @F @DT @RT(4)BOOL @RT(0) @T @T @BASIC 0 @F 
+@F @F 
+@T 
+@BEG_Attrib 
+4 @RT(4)TRUE @RT(0) 
+@RT(0) @RT(0) @RT(0) @RT(0) @RT(0) @RT(0) @RT(0) 
+@RT(0) @RT(0) @RT(0) @RT(1)y @RT(0) @RT(0) 
+@RT(0) @RT(0) 
+@RT(0) @RT(0) @RT(0) @RT(0) @RT(0) 
+@END_Attrib 
+1 
+@AttrSym @RT(10)sv_easyout @RT(0) @F @F 
+@T 
+@BEG_Attrib 
+4 @RT(5)FALSE @RT(0) 
+@RT(0) @RT(0) @RT(0) @RT(0) @RT(0) @RT(0) @RT(0) 
+@RT(0) @RT(0) @RT(0) @RT(1)y @RT(0) @RT(0) 
+@RT(0) @RT(0) 
+@RT(0) @RT(0) @RT(0) @RT(0) @RT(0) 
+@END_Attrib 
+
+
+@SysVar @RT(14)sv_easyoutTime @RT(0) @T @F @DT @RT(4)LINT @RT(0) @T @T @BASIC 0 @F 
+@F @F 
+@T 
+@BEG_Attrib 
+4 @RT(2)15 @RT(0) 
+@RT(0) @RT(0) @RT(0) @RT(0) @RT(0) @RT(0) @RT(0) 
+@RT(0) @RT(0) @RT(0) @RT(1)y @RT(0) @RT(0) 
+@RT(0) @RT(0) 
+@RT(0) @RT(0) @RT(0) @RT(0) @RT(0) 
+@END_Attrib 
+1 
+@AttrSym @RT(14)sv_easyoutTime @RT(0) @F @F 
+@T 
+@BEG_Attrib 
+4 @RT(2)15 @RT(0) 
+@RT(0) @RT(0) @RT(0) @RT(0) @RT(0) @RT(0) @RT(0) 
+@RT(0) @RT(0) @RT(0) @RT(1)y @RT(0) @RT(0) 
+@RT(0) @RT(0) 
+@RT(0) @RT(0) @RT(0) @RT(0) @RT(0) 
+@END_Attrib 
 
 @RT(15)SETreeContainer 
 0 

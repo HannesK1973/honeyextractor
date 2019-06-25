@@ -52,5 +52,5 @@ FORMAT 2.
 <<C:\Schleuder\Repository\IecApplication\HonigSchleuder\system\Vorgabe.pu>> Vorgabe
 <<C:\Schleuder\Repository\IecApplication\HonigSchleuder\system\hw_system.sv>> FUAI1, FUAO1, FUX1, FUX2, KeyGreen, KeyRed, LedGreen, LedRed, ModeSwitchP1, ModeSwitchP3, SafetySwitch1
 <<C:\Schleuder\Repository\IecApplication\HonigSchleuder\system\system.fu>> instance
-<<C:\Schleuder\Repository\IecApplication\HonigSchleuder\system\system.sv>> VisuKeyGreen, VisuKeyRed, svCycleRestTime, svFinishedCycles, svFinishedCyclesP, svIstDrehzahl, svMaxDrehzahl, svProgSelected, svProgramm, svResetCycleCount, svSollDrehzahl, svState
+<<C:\Schleuder\Repository\IecApplication\HonigSchleuder\system\system.sv>> VisuKeyGreen, VisuKeyRed, svCycleRestTime, svFinishedCycles, svFinishedCyclesP, svIstDrehzahl, svMaxDrehzahl, svProgSelected, svProgramm, svResetCycleCount, svSollDrehzahl, svState, sv_easyout, sv_easyoutTime
 <<C:\Schleuder\Repository\IecApplication\HonigSchleuder\system\system.tu>> StateAutomaticRunning, StateAutomaticStopped, StateManual, TCycleArray, TProgramm, TProgrammArray, TState
